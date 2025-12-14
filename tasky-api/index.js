@@ -2,26 +2,16 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import tasksRouter from './api/tasks';
-import usersRouter from './api/users';
+import usersRouter from './api/users/index.js';
 import './db';
 
 dotenv.config();
 
-
 const app = express();
 const port = process.env.PORT;
 
-// Enable CORS for all requests
-app.use(cors());
-
-app.use(express.json());
-app.use(errHandler);
-
-app.use('/api/tasks', tasksRouter);
-
-app.use('/api/users', usersRouter);
-
-const errHandler = (err, req, res next) => {
+// eslint-disable-next-line no-unused-vars
+const errHandler = (err, req, res, next) => {
   /* if the error in development then send stack trace to display whole error,
   if it's in production then just send error message  */
   if(process.env.NODE_ENV === 'production') {
@@ -29,6 +19,14 @@ const errHandler = (err, req, res next) => {
   }
   res.status(500).send(`Hey!! You caught the error 👍👍. Here's the details: ${err.stack} `);
 };
+app.use(express.json());
+// Enable CORS for all requests
+app.use(cors());
+
+
+app.use(errHandler);
+app.use('/api/users', usersRouter);
+app.use('/api/tasks', tasksRouter);
 
 
 app.listen(port, () => {
