@@ -1,34 +1,61 @@
 const BASE_URL = 'http://localhost:8080/api/tasks';
 
 export const getTasks = async () => {
-    const res = await fetch(BASE_URL);
-    return handleResponse(res);
+    const response = await fetch(
+        `http://localhost:8080/api/tasks`, {
+            headers: {
+                'Authorization': window.localStorage.getItem('token')
+            }
+        }
+    )
+    return response.json();
 };
 
-export const addTask = async (data) => {
-    const res = await fetch(BASE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-    return handleResponse(res);
+
+export const addTask = async(data) => {
+    const res = await fetch(
+        `http://localhost:8080/api/tasks`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': window.localStorage.getItem('token')
+            },
+            body: JSON.stringify(data)
+        }
+    )
+        return res.json();
 };
 
 export const deleteTask = async (id) => {
-    const res = await fetch(`${BASE_URL}/${id}`, {
-        method: 'DELETE'
-    });
-    return handleResponse(res);
+    const res =  fetch(
+        `http://localhost:8080/api/tasks/${id}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Authorization': window.localStorage.getItem('token')
+            }
+        }
+    )
+    return res;
 };
 
+
 export const updateTask = async (data) => {
-    const res = await fetch(`${BASE_URL}/${data.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-    return handleResponse(res);
+    const res = await fetch(
+        `http://localhost:8080/api/tasks/${data._id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': window.localStorage.getItem('token')
+            },
+            body: JSON.stringify(data)
+        }
+    )
+        return res.json();
 };
+
 
 const handleResponse = async (res) => {
     if (!res.ok) {
