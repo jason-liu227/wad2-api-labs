@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
+const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
 // Get all users
 router.get('/', async (req, res) => {
@@ -17,6 +18,12 @@ router.post('/', asyncHandler(async (req, res) => {
             return res.status(400).json({ success: false, msg: 'Username and password are required.' });
         }
         if (req.query.action === 'register') {
+            if (!strongPasswordRegex.test(req.body.password)) {
+      return res.status(400).json({
+        success: false,
+        msg: 'Password must be at least 8 characters long and include at least one letter, one digit, and one special character (@$!%*#?&)'
+      });
+    }
             await registerUser(req, res);
         } else {
             await authenticateUser(req, res);
